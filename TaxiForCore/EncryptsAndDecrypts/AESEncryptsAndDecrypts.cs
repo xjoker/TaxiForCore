@@ -7,42 +7,65 @@ namespace TaxiForCore.EncryptsAndDecrypts
 {
     public static class AESEncryptsAndDecrypts
     {
+        private static byte[] staticIV = new byte[] { 122, 120, 99, 118, 98, 110, 109, 100, 102, 114, 97, 115, 100, 102, 103, 104 };
+
+        /// <summary>
+        /// 简单AES加密 可使用任意长度密钥
+        /// </summary>
+        /// <param name="text">明文</param>
+        /// <param name="SecretKey">Key</param>
+        /// <returns></returns>
+        public static string SimpleEncrypt(this string text,string SecretKey)
+        {
+            string md5SecretKey = MD5Hash.GetMd5Hash(SecretKey);
+            return Encrypt(text, md5SecretKey, staticIV);
+        }
+
+        /// <summary>
+        /// 简单AES解密 只可以解密由 SimpleEncrypt 加密的
+        /// </summary>
+        /// <param name="text">明文</param>
+        /// <param name="SecretKey">Key</param>
+        /// <returns></returns>
+        public static string SimpleDecrypt(this string text, string SecretKey)
+        {
+            string md5SecretKey = MD5Hash.GetMd5Hash(SecretKey);
+            return Decrypt(text, md5SecretKey, staticIV);
+        }
+
 
         /// <summary>
         /// AES 加密模块
         /// </summary>
         /// <param name="text">明文</param>
         /// <param name="SecretKey">Key</param>
-        /// <param name="ivString">IV</param>
+        /// <param name="IV">IV</param>
         /// <returns>Base64编码的String</returns>
-        public static string Encrypt(this string text, string SecretKey)
+        public static string Encrypt(this string text, string SecretKey, Byte[] IV)
         {
             var key = Encoding.UTF8.GetBytes(SecretKey);
 
             using (var aesAlg = Aes.Create())
             {
-                using (var encryptor = aesAlg.CreateEncryptor(key, aesAlg.IV))
+                byte[] encrypted;
+                aesAlg.Key = key;
+                aesAlg.IV = IV;
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream msEncrypt = new MemoryStream())
                 {
-                    using (var msEncrypt = new MemoryStream())
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                        using (var swEncrypt = new StreamWriter(csEncrypt))
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                         {
+                            
                             swEncrypt.Write(text);
                         }
-
-                        var iv = aesAlg.IV;
-
-                        var decryptedContent = msEncrypt.ToArray();
-
-                        var result = new byte[iv.Length + decryptedContent.Length];
-
-                        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
-                        Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
-
-                        return Convert.ToBase64String(result);
+                        encrypted = msEncrypt.ToArray();
                     }
                 }
+
+                return Convert.ToBase64String(encrypted);
             }
         }
 
@@ -51,37 +74,37 @@ namespace TaxiForCore.EncryptsAndDecrypts
         /// </summary>
         /// <param name="encrypted">密文</param>
         /// <param name="SecretKey">Key</param>
-        /// <param name="ivString">IV</param>
+        /// <param name="IV">IV</param>
         /// <returns>UTF-8编码的String</returns>
-        public static string Decrypt(string cipherText, string SecretKey)
+        public static string Decrypt(string cipherText, string SecretKey,Byte[] IV)
         {
+            string plaintext = null;
             var fullCipher = Convert.FromBase64String(cipherText);
-
-            var iv = new byte[16];
-            var cipher = new byte[16];
-
-            Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
-            Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, iv.Length);
-            var key = Encoding.UTF8.GetBytes(SecretKey);
-
-            using (var aesAlg = Aes.Create())
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create())
             {
-                using (var decryptor = aesAlg.CreateDecryptor(key, iv))
+                aesAlg.Key = Encoding.UTF8.GetBytes(SecretKey);
+                aesAlg.IV = IV;
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(fullCipher))
                 {
-                    string result;
-                    using (var msDecrypt = new MemoryStream(cipher))
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                         {
-                            using (var srDecrypt = new StreamReader(csDecrypt))
-                            {
-                                result = srDecrypt.ReadToEnd();
-                            }
+
+                            // Read the decrypted bytes from the decrypting  stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
                         }
                     }
-
-                    return result;
                 }
+
+                return plaintext;
             }
         }
     }

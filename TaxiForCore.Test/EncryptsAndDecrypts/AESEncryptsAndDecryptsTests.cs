@@ -1,4 +1,5 @@
-﻿using TaxiForCore.EncryptsAndDecrypts;
+﻿using System.Security.Cryptography;
+using TaxiForCore.EncryptsAndDecrypts;
 using Xunit;
 
 namespace TaxiForCore.Test.EncryptsAndDecrypts
@@ -8,18 +9,21 @@ namespace TaxiForCore.Test.EncryptsAndDecrypts
 
         [Fact]
         public void EncryptTest()
-        { 
-            var b = AESEncryptsAndDecrypts.Encrypt("TestEncrypt", "dofkrfaosrdedofkrfaosrdedofkrfao");
-            var c = AESEncryptsAndDecrypts.Decrypt(b, "dofkrfaosrdedofkrfaosrdedofkrfao");
-            Assert.Equal(c, "TestEncrypt");
+        {
+            using (Aes myAes = Aes.Create())
+            {
+                var b = AESEncryptsAndDecrypts.Encrypt("TestEncrypt", "dofkrfaosrdedofkrfaosrdedofkrfao",myAes.IV);
+                var c = AESEncryptsAndDecrypts.Decrypt(b, "dofkrfaosrdedofkrfaosrdedofkrfao", myAes.IV);
+                Assert.Equal(c, "TestEncrypt");
+            }
         }
 
         [Fact]
-        public void DecryptTest()
+        public void SimpleEncryptTest()
         {
-            var b = AESEncryptsAndDecrypts.Decrypt("a8FRqc+qOoi3rV0cvfjlpuZoL9K7E/DfsRZ2nd1fS0c=", "dofkrfaosrdedofkrfaosrdedofkrfao");
-            string check = "TestEncrypt";
-            Assert.Equal(b, check);
+            var b = AESEncryptsAndDecrypts.SimpleEncrypt("TestEncrypt", "123456");
+            var c = AESEncryptsAndDecrypts.SimpleDecrypt(b, "123456");
+            Assert.Equal(c, "TestEncrypt");
         }
     }
 }

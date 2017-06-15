@@ -38,12 +38,16 @@
 ### AES
 * AESEncryptsAndDecrypts.Encrypt AES 加密模块
 * AESEncryptsAndDecrypts.Decrypt AES 解密模块
-
+* AESEncryptsAndDecrypts.SimpleEncrypt AES 加密模块 可使用任意长度密钥 无需IV
+* AESEncryptsAndDecrypts.SimpleDecrypt AES 解密模块 只可以解密由 SimpleEncrypt 加密的
 
 ### 密码加密/校验
 * PasswordHash.CreateHash 密码加密方法 sha1
 * PasswordHash.ValidatePassword 校验密码
 
+### MD5加密/校验
+* MD5Hash.GetMd5Hash MD5加密
+* MD5Hash.VerifyMd5Hash MD5校验
 
 ### Token生成和校验
 * TokenHelper.GenTokenString 只生成TOKEN不返回GUID
