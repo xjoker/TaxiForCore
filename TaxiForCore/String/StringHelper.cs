@@ -65,33 +65,31 @@ namespace TaxiForCore.StringHelper
         /// </summary>
         /// <param name="strInput"></param>
         /// <returns></returns>
-        //public static bool IsValidJson(this string strInput)
-        //{
-        //    strInput = strInput.Trim();
-        //    if ((strInput.StartsWith("{") && strInput.EndsWith("}")) ||
-        //        (strInput.StartsWith("[") && strInput.EndsWith("]")))
-        //    {
-        //        Encoding encoding = Encoding.UTF8;
-        //        json
-        //        using (var reader = JsonReaderWriterFactory.CreateJsonReader(encoding.GetBytes(strInput), XmlDictionaryReaderQuotas.Max))
-        //        {
-        //            try
-        //            {
-        //                var b = XElement.Load(reader).Attribute("type").Value;
-        //                return true;
-        //            }
-        //            catch
-        //            {
-        //                return false;
-        //            }
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+        public static bool IsValidJson(this string strInput)
+        {
+            strInput = strInput.Trim();
+            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) ||
+                (strInput.StartsWith("[") && strInput.EndsWith("]")))
+            {
+                Encoding encoding = Encoding.UTF8;
+                using (var reader = JsonReaderWriterFactory.CreateJsonReader(encoding.GetBytes(strInput), XmlDictionaryReaderQuotas.Max))
+                {
+                    try
+                    {
+                        var b = XElement.Load(reader).Attribute("type").Value;
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// 字符串相等判断
