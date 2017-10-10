@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using TaxiForCore.Log;
 using System.Security.AccessControl;
 
 namespace TaxiForCore.FileHelper
@@ -248,7 +247,7 @@ namespace TaxiForCore.FileHelper
             }
             catch (Exception ex)
             {
-                LogHelper.Instance.LogWrite(ex.ToString());
+                Log.LogHelper.Instance.LogWrite(ex.ToString());
                 return false;
             }
         }
