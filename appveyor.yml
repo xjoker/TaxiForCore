@@ -1,0 +1,21 @@
+version: 1.0.3.{build}
+configuration: Release
+image:
+- Visual Studio 2017
+before_build:
+  - cmd: nuget restore
+build:
+  verbosity: detailed
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
+nuget:
+  account_feed: true
+  project_feed: true
+deploy:
+  provider: NuGet
+  api_key:
+    secure: uvdHcMdSNp0L8ucThTQqTEWPvFwfFeDcYBSK/h4uDzsZUB+dcawPif47fLMQ8bco
+  skip_symbols: false
+  artifact: /.*\.nupkg/
+test: off
