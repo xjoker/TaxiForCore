@@ -12,7 +12,7 @@ namespace TaxiForCore.DateTimeHelper
         public static DateTime StampToDateTime(this string timeStamp)
         {
             // .NET Version >= 4.6 can use
-            long lTime = long.Parse(timeStamp);
+            long lTime = (long)Convert.ToDouble(timeStamp);
             return DateTimeOffset.FromUnixTimeSeconds(lTime).LocalDateTime;
         }
 
