@@ -145,5 +145,36 @@ namespace TaxiForCore.StringHelper
             
         }
 
+        /// <summary>
+        /// 将UInt64 转换为 UInt32
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static uint ConvertUInt64ToUInt32(string value)
+        {
+            return (uint)Math.Min(uint.MaxValue, ulong.Parse(value));
+        }
+
+        /// <summary>
+        /// 将字符串转为Base64编码
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Base64Encode(this string text)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(text);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
+        /// <summary>
+        /// 将Base64编码转为字符串
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Base64Decode(this string text)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(text);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
     }
 }

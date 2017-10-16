@@ -29,7 +29,7 @@ namespace TaxiForCore.FileHelper
 
 
         /// <summary>
-        /// 设定目录完全访问权限
+        /// 设定目录完全访问权限 Windows专用
         /// </summary>
         /// <param name="identity">用户实体</param>
         /// <param name="path">路径</param>
