@@ -18,4 +18,4 @@ deploy:
     secure: uvdHcMdSNp0L8ucThTQqTEWPvFwfFeDcYBSK/h4uDzsZUB+dcawPif47fLMQ8bco
   skip_symbols: false
   artifact: /.*\.nupkg/
-test: off
+test: on

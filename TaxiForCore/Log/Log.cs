@@ -260,11 +260,7 @@ namespace TaxiForCore.Log
         /// <param name="currentDate">传入需要创建的时间</param>
         private void BuiderDir(DateTime currentDate)
         {
-            string year = currentDate.ToString("yyyy");
-            string month = currentDate.ToString("MM");
-            //   年/年月
-            //string subdir = string.Concat(_logDirectoryName, '\\', year, '\\', year + month, '\\');
-            string subdir = Path.Combine(_logDirectoryName, year, year + month);
+            string subdir = Path.Combine(_logDirectoryName, currentDate.ToString("yyyy"), currentDate.ToString("yyyy") + currentDate.ToString("MM"));
             string path = Path.Combine(LogDirectory, subdir);
             if (!Directory.Exists(path))
             {
@@ -320,19 +316,13 @@ namespace TaxiForCore.Log
         /// </summary>
         /// <param name="text">日志错误信息</param>
         /// <param name="level">日志等级</param>
-        public void LogWrite(string text, LogLevel level)
-        {
-            LogWrite(new LogType(text, level));
-        }
+        public void LogWrite(string text, LogLevel level) => LogWrite(new LogType(text, level));
 
         /// <summary>
         /// 日志写入
         /// </summary>
         /// <param name="text">日志错误信息</param>
-        public void LogWrite(string text)
-        {
-            LogWrite(text, LogLevel.Debug);
-        }
+        public void LogWrite(string text) => LogWrite(text, LogLevel.Debug);
 
         /// <summary>
         /// 日志写入，传入类型为Exception
@@ -373,6 +363,8 @@ namespace TaxiForCore.Log
                     _CurrentFileTimeSign = _CurrentFileTimeSign.AddMonths(1);
                     format = now.ToString("yyyyMM'.log'");
                     BuiderDir(now);
+                    break;
+                case LogFileSplit.Size:
                     break;
                 default:
                     _fileSymbol++;
