@@ -227,20 +227,20 @@ namespace TaxiForCore.Log
                 {
                     GetCurrentFilename();
                 }
-                using (FileStream fs = new FileStream(LogDirectory + _currentFileName, FileMode.Append))
+                using (FileStream fs = new FileStream(Path.Combine(LogDirectory ,_currentFileName), FileMode.Append))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
                         // 日志文件模板
-                        sw.WriteLine("记录时间:" + log.DateTime);
-                        sw.WriteLine("日志级别：" + log.LogLevel.ToString());
-                        sw.WriteLine("出错类：" + log.ErrorClass);
-                        sw.WriteLine("行号：" + log.LineNumber.ToString());
-                        sw.WriteLine("错误描述：" + log.ErrorMessage);
-                        sw.WriteLine("错误详细：" + log.ErrorDetails);
-                        sw.WriteLine(" ");
-                        sw.WriteLine("--------------------------------------------------------------");
-                        sw.WriteLine(" ");
+                        sw.WriteLine($"记录时间: {log.DateTime}");
+                        sw.WriteLine($"日志级别：{log.LogLevel.ToString()}");
+                        sw.WriteLine($"出错类： {log.ErrorClass}");
+                        sw.WriteLine($"行号： {log.LineNumber.ToString()}");
+                        sw.WriteLine($"错误描述：{log.ErrorMessage}");
+                        sw.WriteLine($"错误详细：{log.ErrorDetails}");
+                        sw.WriteLine("");
+                        sw.WriteLine("--------------------------------------------------------------\n");
+                        sw.WriteLine("");
                         _fileSize += Encoding.UTF8.GetBytes(log.ToString()).Length;
                         sw.Flush();
                     }
@@ -263,7 +263,8 @@ namespace TaxiForCore.Log
             string year = currentDate.ToString("yyyy");
             string month = currentDate.ToString("MM");
             //   年/年月
-            string subdir = string.Concat(_logDirectoryName, '\\', year, '\\', year + month, '\\');
+            //string subdir = string.Concat(_logDirectoryName, '\\', year, '\\', year + month, '\\');
+            string subdir = Path.Combine(_logDirectoryName, year, year + month);
             string path = Path.Combine(LogDirectory, subdir);
             if (!Directory.Exists(path))
             {
