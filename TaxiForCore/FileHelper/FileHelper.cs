@@ -247,7 +247,7 @@ namespace TaxiForCore.FileHelper
             }
             catch (Exception ex)
             {
-                //Log.LogHelper.Instance.LogWrite(ex.ToString());
+                Log.LogHelper.Instance.LogWrite(ex.ToString());
                 return false;
             }
         }
